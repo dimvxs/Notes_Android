@@ -3,36 +3,35 @@
 
     <!-- Светлая тема -->
     <style name="Theme_Light" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/primary</item>              <!-- #6750A4 -->
+        <item name="colorPrimaryVariant">@color/primaryDark</item>   <!-- #4F378B -->
+        <item name="colorOnPrimary">@color/onPrimary</item>          <!-- #FFFFFF -->
 
-        <!-- Цвета текста и фона -->
-        <item name="android:textColorPrimary">@color/black</item>
-        <item name="android:textColorSecondary">@color/gray_700</item>
-        <item name="android:colorBackground">@color/white</item>
+        <item name="android:textColorPrimary">@color/textPrimary</item>   <!-- #000000 -->
+        <item name="android:textColorSecondary">@color/gray_700</item>    <!-- #616161 -->
+        <item name="android:colorBackground">@color/background</item>     <!-- #FFFFFF -->
     </style>
 
-    <!-- Тёмная тема -->
+    <!-- Тёмная тема (улучшенная) -->
     <style name="Theme_Dark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryVariant">@color/black</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/primary</item>              <!-- #6750A4 – или замени на light purple если хочешь -->
+        <item name="colorPrimaryVariant">@color/primaryDark</item>   <!-- #4F378B -->
+        <item name="colorOnPrimary">@color/onPrimary</item>          <!-- #FFFFFF -->
 
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/gray_300</item>
-        <item name="android:colorBackground">@color/black</item>
+        <item name="android:textColorPrimary">@color/white_90</item>      <!-- #E0E0E0 – читаемо -->
+        <item name="android:textColorSecondary">@color/gray_300</item>    <!-- #E0E0E0 -->
+        <item name="android:colorBackground">@color/black_90</item>       <!-- #121212 – стандартный тёмный -->
     </style>
 
-    <!-- Синяя тема -->
+    <!-- Синяя тема (читаемая) -->
     <style name="Theme_Blue" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/blue_500</item>
-        <item name="colorPrimaryVariant">@color/blue_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/blue_500</item>             <!-- #2196F3 -->
+        <item name="colorPrimaryVariant">@color/blue_700</item>      <!-- #1976D2 -->
+        <item name="colorOnPrimary">@color/white</item>              <!-- #FFFFFF -->
 
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/blue_100</item>
-        <item name="android:colorBackground">@color/blue_500</item>
+        <item name="android:textColorSecondary">@color/blue_100</item>   <!-- #BBDEFB – светло-голубой -->
+        <item name="android:colorBackground">@color/blue_gray_900</item> <!-- #0D1B2A – тёмно-синий фон -->
     </style>
 
 </resources>

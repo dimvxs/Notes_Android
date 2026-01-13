@@ -1,6 +1,8 @@
 package com.example.notes;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,6 +26,23 @@ public class NoteDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String theme = prefs.getString("theme", "Светлая");
+        if ("Тёмная".equals(theme)) setTheme(R.style.Theme_Dark);
+        else if ("Синяя".equals(theme)) setTheme(R.style.Theme_Blue);
+        else setTheme(R.style.Theme_Light);
+
+        Typeface typeface;
+        try {
+            String fontFile = prefs.getString("fonts", "roboto_variablefont.ttf");
+            typeface = Typeface.createFromAsset(getAssets(), "fonts/" + fontFile);
+        } catch (Exception e) {
+            typeface = Typeface.DEFAULT;
+        }
+
         setContentView(R.layout.activity_note_detail);
 
         editTitle = findViewById(R.id.editTitleDetail);
@@ -31,6 +50,9 @@ public class NoteDetailActivity extends AppCompatActivity {
         importantCheck = findViewById(R.id.checkImportant);
         btnSave = findViewById(R.id.btnSaveNote);
         btnDelete = findViewById(R.id.btnDeleteNote);
+
+        editTitle.setTypeface(typeface);
+        editContent.setTypeface(typeface);
 
         // Изменение цвета заголовка при отметке "Важно"
         importantCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {

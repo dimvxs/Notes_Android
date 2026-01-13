@@ -51,6 +51,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
+        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String theme = prefs.getString("theme", "Светлая");
+        if ("Тёмная".equals(theme)) setTheme(R.style.Theme_Dark);
+        else if ("Синяя".equals(theme)) setTheme(R.style.Theme_Blue);
+        else setTheme(R.style.Theme_Light);
+
+        Typeface typeface;
+        try {
+            String fontFile = prefs.getString("font", "roboto_variablefont.ttf");  // ← "font" вместо "fonts"
+            typeface = Typeface.createFromAsset(getAssets(), "fonts/" + fontFile);
+        } catch (Exception e) {
+            typeface = Typeface.DEFAULT;
+        }
+
 
         setContentView(R.layout.activity_main);
 

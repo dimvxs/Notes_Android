@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">#6750A4</color>
+    <!-- Основные цвета (Material 3 / App-wide) -->
+    <color name="primary">#6750A4</color>          <!-- purple_500 -->
+    <color name="primaryDark">#4F378B</color>      <!-- purple_700 / primaryVariant -->
     <color name="onPrimary">#FFFFFF</color>
-    <color name="primaryDark">#4F378B</color>
 
     <color name="background">#FFFFFF</color>
     <color name="textPrimary">#000000</color>
+
+    <!-- Белый / Чёрный / Серые -->
     <color name="white">#FFFFFF</color>
-    <color name="yellow">#FFF59D</color>
-
-    <color name="purple_500">#6200EE</color>
-    <color name="purple_700">#3700B3</color>
-    <color name="black_900">#121212</color>
-
-    <color name="blue_500">#2196F3</color>
-    <color name="blue_700">#1976D2</color>
-    <color name="blue_100">#BBDEFB</color>
+    <color name="black">#000000</color>
     <color name="gray_300">#E0E0E0</color>
     <color name="gray_700">#616161</color>
-    <color name="black">#000000</color>
 
+    <!-- Жёлтый (для important заметок) -->
+    <color name="yellow">#FFF59D</color>
+
+    <!-- Тёмная тема (M3-style) -->
+    <color name="black_90">#121212</color>         <!-- background -->
+    <color name="black_80">#1E1E1E</color>         <!-- surface / cards -->
+    <color name="white_90">#E0E0E0</color>         <!-- text primary -->
+
+    <!-- Синяя тема -->
+    <color name="blue_500">#2196F3</color>         <!-- primary -->
+    <color name="blue_700">#1976D2</color>         <!-- primaryVariant -->
+    <color name="blue_100">#BBDEFB</color>         <!-- light variant / accents -->
+
+    <color name="blue_gray_950">#001233</color>    <!-- очень тёмный фон -->
+    <color name="blue_gray_900">#0D1B2A</color>    <!-- background -->
+    <color name="blue_gray_800">#13294B</color>    <!-- surface -->
+    <color name="blue_gray_300">#A3BFFA</color>    <!-- text secondary / accents -->
+
+    <!-- Дополнительные акценты (можно использовать для secondary) -->
+    <color name="purple_200">#D0BCFF</color>
+    <color name="teal_200">#A5F2E9</color>
+    <color name="light_blue_300">#81D4FA</color>
 
 </resources>
