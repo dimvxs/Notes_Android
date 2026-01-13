@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Заметки</string>
+    <string name="select_font">Выберите шрифт</string>
+    <string name="select_theme">Выберите тему</string>
+</resources>

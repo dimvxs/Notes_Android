@@ -1,0 +1,5 @@
+<resources>
+    <attr name="colorBackground" format="color"/>
+    <attr name="textColorPrimary" format="color"/>
+    <attr name="textColorHint" format="color"/>
+</resources>
