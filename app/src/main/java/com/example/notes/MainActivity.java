@@ -25,20 +25,33 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Главная активность приложения — экран со списком всех заметок.
+ * Здесь отображается RecyclerView с заметками, FAB для добавления,
+ * меню настроек и обработка перехода к деталям заметки.
+ */
 public class MainActivity extends AppCompatActivity {
 
+    // Список заметок (хранится в памяти, синхронизируется с БД)
+    private final List<Note> notes = new ArrayList<>();
+
+    // RecyclerView и его адаптер
     private RecyclerView recyclerView;
     private NoteAdapter adapter;
-    private final List<Note> notes = new ArrayList<>();
+
+    // Кнопка добавления новой заметки (плюсик)
     private FloatingActionButton fabAdd;
 
+    // Launcher для запуска NoteDetailActivity и получения результата (изменено/удалено)
     private final ActivityResultLauncher<Intent> noteDetailLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
+                        // Проверяем, успешно ли завершена детальная активность
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             boolean changed = result.getData().getBooleanExtra("noteChanged", false);
                             boolean deleted = result.getData().getBooleanExtra("noteDeleted", false);
+                            // Если заметка изменена или удалена — перезагружаем список
                             if (changed || deleted) {
                                 loadNotesFromDb();
                             }
@@ -50,48 +63,64 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        // === Применяем выбранную пользователем тему ===
         SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
         String theme = prefs.getString("theme", "Светлая");
-        if ("Тёмная".equals(theme)) setTheme(R.style.Theme_Dark);
-        else if ("Синяя".equals(theme)) setTheme(R.style.Theme_Blue);
-        else setTheme(R.style.Theme_Light);
+        if ("Тёмная".equals(theme)) {
+            setTheme(R.style.Theme_Dark);
+        } else if ("Синяя".equals(theme)) {
+            setTheme(R.style.Theme_Blue);
+        } else {
+            setTheme(R.style.Theme_Light);
+        }
 
+        // === Загружаем выбранный шрифт из assets ===
         Typeface typeface;
         try {
-            String fontFile = prefs.getString("font", "roboto_variablefont.ttf");  // ← "font" вместо "fonts"
+            String fontFile = prefs.getString("font", "roboto_variablefont.ttf");
             typeface = Typeface.createFromAsset(getAssets(), "fonts/" + fontFile);
         } catch (Exception e) {
+            // Если шрифт не найден или ошибка — используем стандартный
             typeface = Typeface.DEFAULT;
         }
 
-
+        // Устанавливаем layout экрана
         setContentView(R.layout.activity_main);
 
-        // Toolbar
+        // === Настройка Toolbar ===
         setSupportActionBar(findViewById(R.id.toolbar));
 
+        // === Инициализация RecyclerView ===
         recyclerView = findViewById(R.id.recyclerView);
-        fabAdd = findViewById(R.id.fabAdd);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Адаптер с двумя слушателями (клик и долгое нажатие)
-        adapter = new NoteAdapter(notes, this::openNoteDetail,
-                this::showDeleteNoteDialog);
+        // === Создание и привязка адаптера заметок ===
+        // Передаём список, обработчики клика и долгого нажатия
+        adapter = new NoteAdapter(notes, this::openNoteDetail, this::showDeleteNoteDialog);
         recyclerView.setAdapter(adapter);
 
+        // Применяем шрифт ко всему списку (если адаптер поддерживает)
+        // adapter.setTypeface(typeface);  // ← раскомментируй, если добавил метод в NoteAdapter
+
+        // === Кнопка добавления новой заметки ===
+        fabAdd = findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(v -> showAddNoteDialog());
 
+        // Загружаем заметки из базы при запуске
         loadNotesFromDb();
     }
 
+    /**
+     * Загружает все заметки из базы данных в фоновом потоке
+     * и обновляет список на UI-потоке.
+     */
     private void loadNotesFromDb() {
         new Thread(() -> {
             AppDatabase db = AppDatabase.getInstance(this);
             NoteDao noteDao = db.noteDao();
             List<Note> noteList = noteDao.getAll();
 
+            // Если база пустая — создаём приветственную заметку
             if (noteList.isEmpty()) {
                 Note demo = new Note();
                 demo.title = "Добро пожаловать!";
@@ -101,15 +130,20 @@ public class MainActivity extends AppCompatActivity {
                 noteList = noteDao.getAll();
             }
 
+            // Передаём копию списка на UI-поток
             List<Note> finalNoteList = noteList;
             runOnUiThread(() -> {
                 notes.clear();
                 notes.addAll(finalNoteList);
-                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();  // Обновляем весь список
             });
         }).start();
     }
 
+    /**
+     * Показывает диалог для создания новой заметки.
+     * После сохранения заметка добавляется в БД и список обновляется.
+     */
     private void showAddNoteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Новая заметка");
@@ -149,35 +183,44 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Открывает экран детального просмотра/редактирования заметки.
+     * Передаёт ID заметки и ждёт результата через launcher.
+     */
     private void openNoteDetail(Note note) {
         Intent intent = new Intent(this, NoteDetailActivity.class);
         intent.putExtra("noteId", note.id);
         noteDetailLauncher.launch(intent);
     }
 
+    /**
+     * Показывает диалог подтверждения удаления заметки.
+     * Удаляет из БД и сразу из списка в памяти (для мгновенного обновления UI).
+     */
+    private void showDeleteNoteDialog(Note note) {
+        new AlertDialog.Builder(this)
+                .setTitle("Удалить заметку")
+                .setMessage("Вы действительно хотите удалить эту заметку?")
+                .setPositiveButton("Удалить", (d, w) -> {
+                    // Удаляем из базы данных в фоновом потоке
+                    new Thread(() -> {
+                        AppDatabase.getInstance(this).noteDao().delete(note);
+                    }).start();
 
-private void showDeleteNoteDialog(Note note) {
-    new AlertDialog.Builder(this)
-            .setTitle("Удалить заметку")
-            .setMessage("Вы действительно хотите удалить эту заметку?")
-            .setPositiveButton("Удалить", (d, w) -> {
-                // 1. Удаляем из базы в фоне
-                new Thread(() -> {
-                    AppDatabase.getInstance(this).noteDao().delete(note);
-                }).start();
+                    // Мгновенно удаляем из списка и уведомляем адаптер
+                    int position = notes.indexOf(note);
+                    if (position != -1) {
+                        notes.remove(position);
+                        adapter.notifyItemRemoved(position);
+                        // Обновляем позиции остальных элементов
+                        adapter.notifyItemRangeChanged(position, notes.size());
+                    }
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
 
-                // 2. Удаляем сразу из списка в памяти (это и есть "реальное время")
-                int position = notes.indexOf(note);
-                if (position != -1) {
-                    notes.remove(position);
-                    adapter.notifyItemRemoved(position);
-                    adapter.notifyItemRangeChanged(position, notes.size()); // чтобы не было пустых мест
-                }
-            })
-            .setNegativeButton("Отмена", null)
-            .show();
-}
-
+    // === Меню в ActionBar ===
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
